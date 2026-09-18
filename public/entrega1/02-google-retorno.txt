@@ -1,0 +1,7 @@
+URL de retorno cadastrada no cliente Web do Google:
+
+https://SEU-PROJETO.pages.dev/oauth/callback/google
+
+Tipo de cliente OAuth: Web application
+Escopos solicitados: openid email profile
+Client Secret: [REMOVIDO]

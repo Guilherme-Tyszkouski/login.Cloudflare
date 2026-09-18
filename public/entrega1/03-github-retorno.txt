@@ -1,0 +1,12 @@
+OAuth App cadastrada no GitHub:
+
+Homepage URL:
+https://SEU-PROJETO.pages.dev
+
+Authorization callback URL:
+https://SEU-PROJETO.pages.dev/oauth/callback/github
+
+Device Flow: desativado
+Escopos solicitados: nenhum (o pedido de autorização omite scope)
+Client Secret: [REMOVIDO]
+Responsável pela rotação do Client Secret: Guilherme Tyszkouski
