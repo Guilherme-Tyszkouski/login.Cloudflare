@@ -60,6 +60,10 @@ body {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18), 0 12px 32px rgba(0, 0, 0, 0.22);
 }
 
+.cartao--largo {
+  max-width: 28rem;
+}
+
 .cartao__topo {
   text-align: center;
   margin-bottom: 1.75rem;
@@ -81,6 +85,10 @@ body {
 .opcoes {
   display: grid;
   gap: 0.625rem;
+}
+
+.opcoes form {
+  margin: 0;
 }
 
 .opcao {
@@ -111,6 +119,17 @@ body {
 .opcao:focus-visible {
   outline: 2px solid var(--foco);
   outline-offset: 2px;
+}
+
+.opcao--principal,
+.opcao--principal:hover {
+  background: var(--foco);
+  border-color: var(--foco);
+  color: #ffffff;
+}
+
+.opcao--principal:hover {
+  filter: brightness(1.08);
 }
 
 .opcao__icone {

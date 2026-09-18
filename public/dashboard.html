@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Painel — Laboratório de autenticação</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="tela">
+      <div class="cartao cartao--largo">
+        <header class="cartao__topo">
+          <h1 class="cartao__titulo">Painel</h1>
+          <p class="cartao__subtitulo" id="saudacao">Consultando a sessão…</p>
+        </header>
+
+        <!-- Com sessão confirmada por /api/me. -->
+        <section id="tela-sessao" hidden>
+          <dl class="perfil">
+            <div class="perfil__linha">
+              <dt>Emissor</dt>
+              <dd id="perfil-issuer">—</dd>
+            </div>
+            <div class="perfil__linha">
+              <dt>Identificador</dt>
+              <dd id="perfil-subject">—</dd>
+            </div>
+            <div class="perfil__linha">
+              <dt>Nome</dt>
+              <dd id="perfil-nome">—</dd>
+            </div>
+            <div class="perfil__linha">
+              <dt>E-mail</dt>
+              <dd id="perfil-email">—</dd>
+            </div>
+          </dl>
+
+          <form method="post" action="/oauth/logout">
+            <button class="opcao opcao--sair" type="submit">Sair</button>
+          </form>
+        </section>
+
+        <!-- Sem sessão: o arquivo continua acessível, mas não há o que mostrar. -->
+        <section id="tela-sem-sessao" hidden>
+          <div class="opcoes">
+            <a class="opcao opcao--principal" href="index.html">Ir para o login</a>
+          </div>
+        </section>
+
+        <p class="status" id="status" aria-live="polite"></p>
+      </div>
+    </main>
+
+    <script src="dashboard.js"></script>
+  </body>
+</html>

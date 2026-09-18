@@ -1,21 +1,13 @@
-// Consulta a sessão na mesma origem. O navegador envia apenas o cookie
-// opaco: nenhum token é guardado em localStorage ou sessionStorage.
+// Tela de login. Consulta a sessão na mesma origem: o navegador envia
+// apenas o cookie opaco, e nenhum token é guardado em localStorage ou
+// sessionStorage.
 //
-// A página começa com as duas telas escondidas e mostra uma só depois da
-// resposta de /api/me. Assim os campos do perfil nunca aparecem vazios.
+// Com sessão válida, a tela troca os botões de login pelo acesso ao painel.
 
 const status = document.getElementById("status");
 const subtitulo = document.getElementById("subtitulo");
 const telaEntrada = document.getElementById("tela-entrada");
 const telaSessao = document.getElementById("tela-sessao");
-
-function mostrar(secao, mensagem) {
-  telaEntrada.hidden = secao !== "entrada";
-  telaSessao.hidden = secao !== "sessao";
-  // Com a sessão aberta, quem ocupa o lugar do subtítulo é a saudação.
-  subtitulo.hidden = secao === "sessao";
-  status.textContent = mensagem;
-}
 
 // Enquanto os SVGs oficiais não estiverem em public/icons/, o navegador
 // mostraria um ícone quebrado. Some com a imagem e deixa só o texto.
@@ -26,8 +18,12 @@ for (const icone of document.querySelectorAll(".opcao__icone")) {
   else icone.addEventListener("error", () => icone.remove());
 }
 
-function preencher(id, valor) {
-  document.getElementById(id).textContent = valor ?? "não informado";
+function mostrar(secao, mensagem) {
+  telaEntrada.hidden = secao !== "entrada";
+  telaSessao.hidden = secao !== "sessao";
+  // Com a sessão aberta, quem ocupa o lugar do subtítulo é a saudação.
+  subtitulo.hidden = secao === "sessao";
+  status.textContent = mensagem;
 }
 
 fetch("/api/me", { credentials: "same-origin" })
@@ -40,11 +36,6 @@ fetch("/api/me", { credentials: "same-origin" })
 
     document.getElementById("saudacao").textContent =
       `Você entrou como ${user.displayName ?? user.email ?? user.subject}.`;
-
-    preencher("perfil-issuer", user.issuer);
-    preencher("perfil-subject", user.subject);
-    preencher("perfil-nome", user.displayName);
-    preencher("perfil-email", user.email);
 
     mostrar("sessao", "Sessão local válida, confirmada por /api/me.");
   })

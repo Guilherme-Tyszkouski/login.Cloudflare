@@ -32,28 +32,12 @@
         <section id="tela-sessao" hidden>
           <p class="saudacao" id="saudacao"></p>
 
-          <dl class="perfil">
-            <div class="perfil__linha">
-              <dt>Emissor</dt>
-              <dd id="perfil-issuer">—</dd>
-            </div>
-            <div class="perfil__linha">
-              <dt>Identificador</dt>
-              <dd id="perfil-subject">—</dd>
-            </div>
-            <div class="perfil__linha">
-              <dt>Nome</dt>
-              <dd id="perfil-nome">—</dd>
-            </div>
-            <div class="perfil__linha">
-              <dt>E-mail</dt>
-              <dd id="perfil-email">—</dd>
-            </div>
-          </dl>
-
-          <form method="post" action="/oauth/logout">
-            <button class="opcao opcao--sair" type="submit">Sair</button>
-          </form>
+          <div class="opcoes">
+            <a class="opcao opcao--principal" href="dashboard.html">Acessar o painel</a>
+            <form method="post" action="/oauth/logout">
+              <button class="opcao" type="submit">Sair</button>
+            </form>
+          </div>
         </section>
 
         <p class="status" id="status" aria-live="polite">Consultando a sessão…</p>
