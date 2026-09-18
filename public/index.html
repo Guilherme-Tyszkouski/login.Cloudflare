@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Laboratório de autenticação</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="tela">
+      <div class="cartao">
+        <header class="cartao__topo">
+          <h1 class="cartao__titulo">Laboratório de autenticação</h1>
+          <p class="cartao__subtitulo" id="subtitulo">Entre com a sua conta para continuar</p>
+        </header>
+
+        <!-- Visível por padrão: se o JavaScript falhar, o login continua à mão. -->
+        <section id="tela-entrada">
+          <div class="opcoes">
+            <a class="opcao" href="/oauth/login/github">
+              <img class="opcao__icone" src="icons/github.svg" alt="" width="18" height="18">
+              <span>Continuar com GitHub</span>
+            </a>
+            <a class="opcao" href="/oauth/login/google">
+              <img class="opcao__icone" src="icons/google.svg" alt="" width="18" height="18">
+              <span>Continuar com Google</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- Só aparece depois que /api/me confirmar a sessão. -->
+        <section id="tela-sessao" hidden>
+          <p class="saudacao" id="saudacao"></p>
+
+          <dl class="perfil">
+            <div class="perfil__linha">
+              <dt>Emissor</dt>
+              <dd id="perfil-issuer">—</dd>
+            </div>
+            <div class="perfil__linha">
+              <dt>Identificador</dt>
+              <dd id="perfil-subject">—</dd>
+            </div>
+            <div class="perfil__linha">
+              <dt>Nome</dt>
+              <dd id="perfil-nome">—</dd>
+            </div>
+            <div class="perfil__linha">
+              <dt>E-mail</dt>
+              <dd id="perfil-email">—</dd>
+            </div>
+          </dl>
+
+          <form method="post" action="/oauth/logout">
+            <button class="opcao opcao--sair" type="submit">Sair</button>
+          </form>
+        </section>
+
+        <p class="status" id="status" aria-live="polite">Consultando a sessão…</p>
+      </div>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
