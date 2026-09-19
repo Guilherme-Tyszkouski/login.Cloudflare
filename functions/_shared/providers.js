@@ -24,7 +24,7 @@ export function readProvider(params) {
 export function baseUrl(env) {
   const value = env?.PUBLIC_BASE_URL;
   if (!value) throw new Error("configuracao_ausente");
-  return String(value).replace(/\/+$/, "");
+  return String(value).trim().replace(/\/+$/, "");
 }
 
 /** A URL de retorno exata cadastrada em cada provedor. */
@@ -32,17 +32,22 @@ export function redirectUri(env, provider) {
   return `${baseUrl(env)}/oauth/callback/${provider}`;
 }
 
+// Um valor colado no painel costuma trazer espaço ou quebra de linha nas
+// pontas. Enviado assim, o provedor não reconhece o cliente e devolve
+// invalid_client. Por isso toda variável é limpa antes de ser usada.
 export function clientId(env, provider) {
   const value = provider === "google" ? env.GOOGLE_CLIENT_ID : env.GITHUB_CLIENT_ID;
-  if (!value) throw new Error("configuracao_ausente");
-  return String(value);
+  const limpo = String(value ?? "").trim();
+  if (!limpo) throw new Error("configuracao_ausente");
+  return limpo;
 }
 
 /** Só é lido dentro da Function, nunca enviado ao navegador. */
 export function clientSecret(env, provider) {
   const value = provider === "google" ? env.GOOGLE_CLIENT_SECRET : env.GITHUB_CLIENT_SECRET;
-  if (!value) throw new Error("configuracao_ausente");
-  return String(value);
+  const limpo = String(value ?? "").trim();
+  if (!limpo) throw new Error("configuracao_ausente");
+  return limpo;
 }
 
 /** Cabeçalhos que nunca podem ser guardados em cache. */
