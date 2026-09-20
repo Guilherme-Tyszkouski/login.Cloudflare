@@ -1,5 +1,5 @@
--- Cole este bloco no Console do banco D1 (Storage & Databases > D1 > Console).
--- Nenhum identificador do banco entra no código: a Function acessa context.env.DB.
+-- Esquema do banco D1 usado pelas Functions (binding DB).
+-- Executado uma vez, no console do D1.
 
 CREATE TABLE oauth_transactions (
   id_hash TEXT PRIMARY KEY,
@@ -26,7 +26,7 @@ CREATE TABLE sessions (
 CREATE INDEX sessions_expiry
   ON sessions (expires_at);
 
--- Conferência do esquema (o resultado vai para public/entrega1/04-d1-esquema.txt):
+-- Conferência do esquema:
 -- SELECT name, type
 -- FROM sqlite_schema
 -- WHERE name NOT LIKE 'sqlite_%'
