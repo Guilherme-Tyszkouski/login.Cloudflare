@@ -1,12 +1,14 @@
 OAuth App cadastrada no GitHub:
 
 Homepage URL:
-https://SEU-PROJETO.pages.dev
+https://login-cloudflare-7ni.pages.dev
 
 Authorization callback URL:
-https://SEU-PROJETO.pages.dev/oauth/callback/github
+https://login-cloudflare-7ni.pages.dev/oauth/callback/github
 
-Device Flow: desativado
-Escopos solicitados: nenhum (o pedido de autorização omite scope)
+Nome da aplicacao: Laboratorio de autenticacao UniBrasil
+Enable Device Flow: desativado
+Allow wildcard matching: desativado
+Escopos solicitados: nenhum (o pedido de autorizacao omite o parametro scope)
 Client Secret: [REMOVIDO]
-Responsável pela rotação do Client Secret: Guilherme Tyszkouski
+Responsavel pela rotacao do Client Secret: Guilherme Tyszkouski

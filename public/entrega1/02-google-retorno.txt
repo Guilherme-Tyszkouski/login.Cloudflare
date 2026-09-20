@@ -1,7 +1,12 @@
 URL de retorno cadastrada no cliente Web do Google:
 
-https://SEU-PROJETO.pages.dev/oauth/callback/google
+https://login-cloudflare-7ni.pages.dev/oauth/callback/google
 
-Tipo de cliente OAuth: Web application
+Tipo de cliente OAuth: Web application (Aplicativo da Web)
+Nome do cliente: Cliente Web 2
 Escopos solicitados: openid email profile
+Status de publicacao do app: Testando (modo de teste)
+Tipo de usuario: Externo
+Usuarios de teste cadastrados: 1
+Origens JavaScript autorizadas: nenhuma
 Client Secret: [REMOVIDO]
