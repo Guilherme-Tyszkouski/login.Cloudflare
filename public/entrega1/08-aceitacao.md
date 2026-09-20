@@ -54,8 +54,8 @@ o que exibir. Esconder um link não torna o arquivo privado.
 
 ## Assinaturas
 
-- Guilherme Tyszkouski — data: ____/____/______
-- (dupla) ______________________ — data: ____/____/______
+- Guilherme Tyszkouski RA_2025207312 — data: 20/09/2026
+- (dupla) Paulo Cesar Mendonça Molena RA_2026108305 — data: 20/09/2026
 
 ## Rotação dos Client Secrets
 
