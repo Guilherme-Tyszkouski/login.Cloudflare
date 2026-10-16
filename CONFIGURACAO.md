@@ -152,8 +152,10 @@ Criptografados (marque **Encrypt** antes de salvar):
 | `GOOGLE_CLIENT_SECRET` | Client Secret do Google |
 | `GITHUB_CLIENT_SECRET` | Client Secret do GitHub |
 
-Peça um novo deploy depois de salvar. Nenhum desses valores pode aparecer no
-repositório, no HTML ou em capturas de tela.
+Peça um novo deploy depois de salvar. Os Client Secrets não podem aparecer no
+repositório, no HTML nem em capturas de tela. Os Client IDs e a
+`PUBLIC_BASE_URL` são públicos e agora ficam versionados no `wrangler.toml`,
+em `[env.production.vars]`.
 
 ---
 
