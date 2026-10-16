@@ -44,7 +44,7 @@ jobs:
         id: ia
         uses: actions/ai-inference@v1
         env:
-          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_PAT }}
+          COPILOT_GITHUB_TOKEN: ${{ github.token }}
         with:
           prompt-file: prompt.txt
           system-prompt: Você é um revisor de código experiente. Responda sempre em português do Brasil, em Markdown.
