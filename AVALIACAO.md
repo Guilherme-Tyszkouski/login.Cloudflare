@@ -118,54 +118,91 @@ A recusa nomeia as duas regras separadamente, o que confirma que ambas estão at
 **PR usado:** https://github.com/Guilherme-Tyszkouski/login.Cloudflare/pull/2
 
 O workflow `.github/workflows/revisao-ia.yml` foi escrito conforme o enunciado e é
-disparado em `opened` e `synchronize`. **Ele não chegou a publicar comentário**, por um
-defeito na própria ação, e não na configuração. O que foi investigado:
+disparado em `opened` e `synchronize`. **Ele não chegou a publicar comentário.** A causa
+foi isolada e está fora do código deste repositório. Esta seção documenta a
+investigação, porque é o que sobrou de aproveitável.
 
-| # | Hipótese | Resultado |
-| --- | --- | --- |
-| 1 | Faltava `models: read` nas permissões | Testada. Mesmo erro. Descartada. |
-| 2 | O `COPILOT_PAT` não tinha acesso | Testada com `github.token`. Mesmo erro. Inconclusiva — o `github.token` pertence ao app do Actions e pode não ter acesso ao Copilot, então falhar com os dois não inocenta o PAT. |
-| 3 | Bug conhecido da ação | Confirmada parcialmente (abaixo). |
+### Causa raiz
 
-A mensagem na `@v1` era:
+O `actions/ai-inference` executa o **Copilot CLI** (`@github/copilot`) e tenta
+interpretar a saída dele como um objeto JSON de *chat completion*, procurando a chave
+`choices`. Mas o CLI, na versão instalada pelo `npm install -g @github/copilot`,
+devolve **texto puro**.
+
+Log do job, com `@v2`:
+
+```
+Using legacy prompt format
+Running simple inference without tools
+Error: simpleInference: chatCompletion failed: Error: simpleInference: Chat completion
+response was a string and not valid JSON (Unexpected token 'O', "OK
+" is not valid JSON)
+```
+
+A string recebida é `OK\n` — texto, não JSON. É incompatibilidade entre a versão atual
+do CLI e o que a ação espera.
+
+### Hipóteses testadas
+
+| # | Hipótese | Teste | Resultado |
+| --- | --- | --- | --- |
+| 1 | Faltava `models: read` nas permissões | Acrescentado ao bloco `permissions` | Mesmo erro. Descartada. |
+| 2 | O `COPILOT_PAT` não tinha acesso | Trocado por `github.token` | Mesmo erro. Inconclusivo: o `github.token` pertence ao app do Actions e pode não ter acesso ao Copilot, então falhar com os dois não inocenta o PAT. |
+| 3 | Bug conhecido da ação (issue #96) | Subida de `@v1` para `@v2` | Não resolveu, mas mudou o erro (ver abaixo). |
+| 4 | A conta ou o PAT não têm direito de acesso | Copilot CLI instalado e executado **localmente** | **Descartada.** O CLI respondeu normalmente, tanto autenticado por `copilot login` quanto com um `COPILOT_PAT` novo exportado em `COPILOT_GITHUB_TOKEN`. |
+
+A hipótese 4 é a que fecha o caso: a conta (plano Copilot Free), o PAT e a permissão
+*Copilot Requests* funcionam. O que não funciona é a ponte entre o CLI e a ação.
+
+### O que a troca de versão revelou
+
+Na `@v1` o erro era opaco:
 
 ```
 Error: API error: TypeError: Cannot use 'in' operator to search for 'choices' in OK
 ```
 
-A issue [#96](https://github.com/actions/ai-inference/issues/96) do repositório
-`actions/ai-inference` descreve exatamente esse erro. O mantenedor explicou que ele
-ocorre quando a API de inferência responde sem o cabeçalho de content-type JSON, e
-lançou a **v2.0.1** com parsing defensivo. O esqueleto do enunciado fixa `@v1`, que não
-tem essa proteção.
+A issue [#96](https://github.com/actions/ai-inference/issues/96) do `actions/ai-inference`
+descreve esse erro; o mantenedor lançou a **v2.0.1** com parsing defensivo. O esqueleto
+do enunciado fixa `@v1`, que não tem essa proteção.
 
-Subindo para `@v2`, o erro ficou mais preciso:
+Subir para `@v2` não consertou nada, mas trocou um `TypeError` genérico por uma
+mensagem que diz exatamente o que chegou e o que era esperado. Foi o que permitiu
+chegar à causa raiz.
 
-```
-simpleInference: a resposta de conclusão do chat era uma string e não um JSON válido
-(Token inesperado 'O', "OK" não é um JSON válido)
-```
+A lição prática: fixar uma versão maior (`@v1`) dá falsa sensação de estabilidade — a
+ação continuou recebendo correções numa linha que este workflow nunca alcançaria.
 
-Ou seja: o corpo da resposta é literalmente o texto `OK`. Não é cabeçalho errado — é a
-API devolvendo outra coisa. A causa raiz permanece do lado do serviço.
+### Avaliação crítica de uma resposta da IA
 
-### Avaliação crítica
+O enunciado pede uma afirmação de IA que esteja errada ou seja irrelevante. Como a
+revisão automática não chegou a comentar, a crítica recai sobre a explicação que o
+**Copilot** produziu quando solicitado a analisar este mesmo job.
 
-O achado desta tarefa não foi sobre o que a IA escreveu, e sim sobre o que acontece
-quando se confia numa dependência fixada por terceiros. O enunciado prescreve
-`actions/ai-inference@v1`, uma versão com bug documentado e já corrigido pelo próprio
-mantenedor. Seguir o roteiro à risca reproduziu o bug; ler o log, procurar a issue e
-subir de versão não resolveu o problema, mas transformou um erro opaco (`'in' operator`
-num `TypeError`) numa mensagem que diz exatamente o que aconteceu.
+Ele acertou o mecanismo — "the step parsing logic assumes valid JSON and does not guard
+against non-JSON responses" — e, significativamente, **todas** as correções que propôs
+são na ação, não neste repositório, o que corrobora o diagnóstico.
 
-A lição prática: fixar uma versão maior (`@v1`) dá uma falsa sensação de estabilidade.
-A ação continuou recebendo correções numa linha que o workflow nunca ia alcançar.
+Mas uma das sugestões está errada. Ele recomendou instruir o modelo a *"Respond with
+valid JSON only. Do not add any explanation, text, or code fences."*
+
+Isso não resolveria. A ação não espera um JSON qualquer: ela espera um **objeto de chat
+completion contendo a chave `choices`**, que é o envelope montado pelo cliente da API,
+não o conteúdo redigido pelo modelo. Ainda que o modelo obedecesse e escrevesse um JSON
+impecável, o `simpleInference` continuaria quebrando ao procurar `choices` dentro dele.
+
+O erro de raciocínio é confundir **o que o modelo escreve** com **o envelope que o
+cliente devolve**. É um conselho plausível à leitura rápida, porque a frase "retorne
+JSON" soa como a resposta natural para "a resposta não era JSON" — e é exatamente por
+soar natural que ele passaria sem revisão. Serve como ilustração do ponto da Pergunta 4:
+uma revisão por IA produz texto convincente, e convincente não é o mesmo que correto.
 
 ### Permissões
 
-O bloco `permissions` declarado foi `contents: read`, `pull-requests: write` e
-`models: read`. Nenhuma dessas foi suficiente para contornar o defeito, mas o
-`pull-requests: write` é de fato indispensável para o `gh pr comment` publicar.
+O bloco declarado foi `contents: read`, `pull-requests: write` e `models: read`. Nenhuma
+contornou o defeito. O teste de remover `pull-requests: write` para registrar o erro de
+permissão **não pôde ser feito**: o job falha no step de inferência, antes de chegar ao
+`gh pr comment`, de modo que a falta da permissão nunca chegaria a se manifestar.
 
 ---
 
